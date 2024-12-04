@@ -1,0 +1,41 @@
+# These are instructions to use cloud9 to create a layer file for lambda
+
+# Set up ubuntu ec2 instance
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.9
+python3.9 --version
+
+# Set up new virtual environment
+sudo apt-get install python3-venv
+python3 -m venv myenv
+cd myenv/bin/
+source activate
+pip install --upgrade pip
+
+# Pip install libraries into virtual environment
+update-alternatives --list python3
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+python3 --version
+
+# Install AWS
+pip install awscli
+
+# Run a single library layer build
+python create_singlelib_layer.py
+
+# Run a multilibrary layer build
+python create_multilib_layer.py
+
+# validate file was updated
+stat -c %Y build/Python.zip | xargs -I{} bash -c 'echo "Last updated: $(date -d @{} -u) ($(($(date +"%s") - {})) seconds ago)"'
+
+# Check file size:
+ls -lh  build/Python.zip
+
+# Ensure it is less than size limit
+
+# Publish new layer to AWS
+aws lambda publish-layer-version --layer-name just_requests --compatible-runtimes python3.12 --compatible-architectures x86_64 arm64 --description "just_requests" --zip-file fileb://build/Python.zip
