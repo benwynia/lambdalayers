@@ -1,0 +1,43 @@
+# 1. Open Cloudshell
+
+# 2. Install the python version
+sudo yum install python3.12
+
+# 3. Create a package folder-- delete it if it already exists (rm -rf packages)
+mkdir packages
+cd packages
+
+Note: Delete it first it already exists (rm -rf packages)
+
+# 4. Create and activate the virtual environment
+python3.12 -m venv venv
+source venv/bin/activate
+
+# 5. Validate that the correct python version is running in the environment
+python --version
+
+# 6. Create a subdirectory called "python"
+mkdir python
+cd python
+
+Note: Delete it first it already exists (rm -rf python)
+
+# 7. Install the required libraries:
+pip install <library_name> -t .
+
+# 8. Delete unneeded files:
+rm -rf *dist-info
+
+# 9. Go back to packages directory:
+cd ..
+
+# 10. Zip the "python" directory and name it:
+zip -r <desired_name>.zip python
+
+# 11A: Upload package to S3:
+aws s3 cp <desired_name>.zip s3://your-s3-bucket-name/
+
+# 11B: Download package to local drive for manual upload to a layer
+# Click "Actions", and scroll down to "Download File"
+# Enter the following path:
+/home/cloudshell-user/packages/<desired_name>.zip
